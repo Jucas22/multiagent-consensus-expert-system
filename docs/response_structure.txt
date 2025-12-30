@@ -1,0 +1,25 @@
+POSICION_GENERAL:
+<1–3 frases resumiendo si está a favor, en contra o condicionalmente a favor.>
+
+ARGUMENTOS_A_FAVOR:
+- Punto positivo 1
+- Punto positivo 2
+- ...
+
+ARGUMENTOS_EN_CONTRA:
+- Punto negativo 1
+- Punto negativo 2
+- ...
+
+RIESGOS_Y_PELIGROS_SERIOS:
+- Riesgo grave 1
+- Riesgo grave 2
+- ...
+
+CONDICIONES_O_SALVAGUARDAS_NECESARIAS:
+- Condición 1
+- Condición 2
+- ...
+
+CONCLUSION_DEL_EXPERTO:
+<Resumen final breve, incluyendo si “acepta” o “rechaza” el sistema y bajo qué condiciones.>

@@ -15,6 +15,234 @@ Para realizar la practica se estableceran varios agentes expertos, cada uno espe
 - **Experto en legalidad y regulaciones**: Analizará las leyes y regulaciones aplicables al uso de IA para analizar datos personales y detectar patologías psicológicas, incluyendo aspectos como el consentimiento informado y la responsabilidad legal.
 - **Experto en economia de la salud**: Evaluará el impacto económico potencial del uso de IA para detectar patologías psicológicas, incluyendo costos y beneficios para los usuarios y el sistema de salud en general.
 
+## Debate workflow
+
+Primero, cada agente experto proporciona su opinión inicial sobre el tema planteado. Luego, se recopilan todas las opiniones y se resumen en un formato conciso. A continuación, cada agente revisa su opinión inicial a la luz del resumen de las opiniones de los demás agentes. Este proceso de revisión puede repetirse varias veces para fomentar un debate más profundo y refinado entre los agentes expertos.
+
+## Estructura de consenso con coordinador central
+
+En esta arquitectura, el consenso entre expertos se consigue mediante un **coordinador central** y una **pizarra común de acuerdo**, en varias rondas de debate. A continuación se explica en qué consiste y cómo se orquesta el código.
+
+---
+
+### 1. Idea general
+
+- Hay varios **agentes expertos** (Ética, Privacidad, Psicología, Legal, …).
+- Cada experto:
+  - recibe el **tema**,
+  - produce una **opinión estructurada** (con secciones fijas: POSICION_GENERAL, ARGUMENTOS_A_FAVOR, etc.).
+- Un **agente coordinador**:
+  - recoge todas las opiniones,
+  - las **resume** y las **organiza**,
+  - mantiene una **“pizarra común”** con:
+    - puntos ya consensuados,
+    - puntos en conflicto,
+    - cuestiones abiertas.
+- En cada ronda:
+  - el coordinador envía a los expertos:
+    - el **resumen global del debate**,
+    - el estado actualizado de la **pizarra común**.
+  - cada experto revisa su postura (`revise_opinion`) teniendo en cuenta:
+    - los puntos acordados,
+    - las objeciones y riesgos que han señalado otros.
+
+Tras varias rondas, se obtiene un estado en el que:
+- hay un conjunto de **puntos de acuerdo**,
+- un conjunto de **condiciones mínimas**,
+- y una **posición global consensuada**.
+
+Ese estado se usa para generar el **documento de consenso final**.
+
+---
+
+### 2. Componentes principales en código
+
+#### 2.1. Agentes expertos
+
+- Clases concretas (p. ej. `EthicExpertAgent`, `PrivacyExpertAgent`, etc.) que:
+  - heredan de una `BaseExpertAgent`,
+  - implementan los métodos:
+    - `initial_opinion(topic: str) -> str`
+    - `revise_opinion(topic: str, resumen_global: str, pizarra: dict) -> str`
+- Sus respuestas siguen siempre la **plantilla común** (secciones fijas).
+
+#### 2.2. Coordinador
+
+- Puede ser:
+  - una clase `CoordinatorAgent` (que use LLM/ADK), o
+  - un módulo de funciones en `workflow/debate_workflow.py` + `workflow/consensus_strategy.py`.
+- Responsabilidades:
+  - Recibir todas las respuestas de los expertos.
+  - Extraer y agrupar la información por secciones:
+    - argumentos a favor, en contra, riesgos, condiciones…
+  - Actualizar la **pizarra común de consenso**.
+  - Generar un **resumen global** claro que se enviará a todos los expertos.
+
+#### 2.3. Pizarra común de consenso
+
+Estructura de datos compartida (por ejemplo, un `dict`) que representa el estado del consenso:
+
+```python
+pizarra = {
+    "puntos_acordados": [
+        # frases o ideas en las que varios expertos coinciden
+    ],
+    "puntos_en_conflicto": [
+        # temas donde hay desacuerdo claro entre expertos
+    ],
+    "preguntas_abiertas": [
+        # cuestiones que aún no se han resuelto
+    ]
+}
+```
+
+Esta pizarra se **actualiza en cada ronda** y se pasa como contexto adicional a los expertos cuando revisan su opinión.
+
+---
+
+### 3. Orquestación del código (flujo por rondas)
+
+#### 3.1. Ronda inicial – Opiniones independientes
+
+1. El archivo principal (`consenso_expertos_prac.py`) pide el **tema** o usa uno por defecto.
+2. Crea los **expertos** (lista de instancias).
+3. Llama a `run_debate_workflow(topic, experts)`.
+
+En `run_debate_workflow`:
+
+```python
+# Ronda 0: opiniones iniciales
+initial_opinions = {}
+for expert in experts:
+    salida = expert.initial_opinion(topic)
+    initial_opinions[expert.role_name] = salida
+```
+
+Cada `salida` es un texto estructurado por secciones.
+
+#### 3.2. Coordinación y creación de la pizarra (después de la ronda inicial)
+
+4. El coordinador procesa `initial_opinions`:
+   - lee todas las secciones,
+   - extrae:
+     - puntos repetidos → `puntos_acordados`,
+     - contradicciones claras → `puntos_en_conflicto`,
+     - dudas no resueltas → `preguntas_abiertas`.
+
+5. Con esto genera:
+   - un **resumen global** del estado del debate,
+   - una **pizarra inicial**.
+
+Ejemplo de pseudocódigo:
+
+```python
+pizarra = construir_pizarra(initial_opinions)
+resumen_global = resumir_debate(topic, initial_opinions, pizarra)
+```
+
+#### 3.3. Rondas de revisión iterativa
+
+6. Se entra en un bucle de rondas (por ejemplo, 2 o 3 iteraciones):
+
+```python
+current_opinions = initial_opinions
+history = []
+
+for round_idx in range(1, max_rounds + 1):
+    # Guardar estado de la ronda anterior
+    history.append({
+        "round": round_idx,
+        "opinions": current_opinions,
+        "resumen_global": resumen_global,
+        "pizarra": pizarra,
+    })
+
+    # Cada experto revisa su opinión con el contexto global
+    new_opinions = {}
+    for expert in experts:
+        salida = expert.revise_opinion(topic, resumen_global, pizarra)
+        new_opinions[expert.role_name] = salida
+
+    current_opinions = new_opinions
+
+    # El coordinador vuelve a analizar las nuevas opiniones
+    pizarra = construir_pizarra(current_opinions)
+    resumen_global = resumir_debate(topic, current_opinions, pizarra)
+
+    # Opcional: comprobar si ya hay suficiente consenso para terminar antes
+    if hay_consenso_suficiente(pizarra, current_opinions):
+        break
+```
+
+En cada iteración:
+
+- El **resumen global** y la **pizarra** se van afinando.
+- Los expertos ajustan sus posturas:
+  - aceptan algunos puntos,
+  - proponen condiciones adicionales,
+  - o señalan conflictos que consideran inaceptables.
+
+#### 3.4. Resultado final del workflow
+
+7. Al terminar el bucle, el workflow devuelve una estructura con toda la información relevante:
+
+```python
+debate_result = {
+    "topic": topic,
+    "initial_opinions": initial_opinions,
+    "final_opinions": current_opinions,
+    "history": history,
+    "pizarra_final": pizarra,
+    "resumen_final": resumen_global,
+}
+```
+
+---
+
+### 4. Generación del documento de consenso
+
+8. El módulo `workflow/document_generator.py` recibe `topic` y `debate_result`:
+
+```python
+doc = generate_consensus_document(topic, debate_result)
+```
+
+Con esa información, construye un documento (por ejemplo en Markdown) con las secciones que pide la práctica:
+
+- **Tema debatido** → `topic`
+- **Resumen del proceso de debate** → usa `history` y los resúmenes de cada ronda
+- **Decisión consensuada** → se basa en `pizarra_final` y las conclusiones de los expertos
+- **Recomendación final justificada** → integra:
+  - los puntos acordados,
+  - las condiciones mínimas,
+  - referencias a riesgos que han sido tenidos en cuenta.
+
+Finalmente, el archivo principal guarda el documento en `outputs/` y termina la ejecución.
+
+---
+
+### 5. Resumen de la orquestación
+
+1. Entrada del usuario: **tema**.
+2. Ronda 0:
+   - Cada experto → `initial_opinion(topic)` (opiniones independientes, estructuradas).
+3. Coordinador:
+   - procesa todas las salidas,
+   - construye un **resumen global** y una **pizarra común**.
+4. Rondas iterativas:
+   - expertos → `revise_opinion(topic, resumen_global, pizarra)`,
+   - coordinador → actualiza resumen y pizarra.
+5. Criterio de parada:
+   - número máximo de rondas alcanzado,
+   - o consenso suficiente detectado.
+6. Generación del **documento final de consenso** a partir de:
+   - tema,
+   - historial de debate,
+   - pizarra final,
+   - conclusiones de los expertos.
+
+Esta es la estructura de consenso basada en un **coordinador central y una pizarra común**, tal y como se usará en el código de la práctica.
+
 
 ## División de tareas
 
