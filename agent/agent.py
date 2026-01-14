@@ -11,22 +11,17 @@ env = os.environ
 
 from google.adk.agents import LlmAgent, SequentialAgent, ParallelAgent, LoopAgent
 from google.adk.models.lite_llm import LiteLlm
+from google.adk.agents.remote_a2a_agent import RemoteA2aAgent
 
 from docs.constants import LLM_MODEL, GLOBAL_INSTRUCTIONS
-from docs.experts_descriptions import (
-    ETIHICS_EXPERT,
-    LEGAL_EXPERT,
-    PSYCHOLOGY_EXPERT,
-    SECURITY_EXPERT,
-    AI_EXPERT,
-)
+from docs.experts_descriptions import *
 
 
 # Registrar modelo personalizado en litellm
-# litellm.model_cost_map.update(
+# litellm.add_known_models(
 #     {
 #         "gpt-oss-120b": {
-#             "max_tokens": 128000,
+#             "max_tokens": 1280000,
 #             "input_cost_per_token": 0,
 #             "output_cost_per_token": 0,
 #             "litellm_provider": "openai",
@@ -65,16 +60,14 @@ def generate_summat_file(content: str | None = None, session=None) -> str:
     return "Archivo final_report.txt generado correctamente."
 
 
-# ============================================================
-#  1) Agente RECOPILADOR
-# ============================================================
+# Agentes Expertos:
 
 ethics = LlmAgent(
     name="agente_etico",
     # model="gemini-2.0-flash",
     model=llm_model,
     description="Agente que evalúa aspectos éticos.",
-    instruction=GLOBAL_INSTRUCTIONS + "\n\n" + ETIHICS_EXPERT,
+    instruction=ETIHICS_EXPERT + "\n\n" + GLOBAL_INSTRUCTIONS,
     tools=[],
     output_key="ethics_response",
 )
@@ -84,7 +77,7 @@ psychology = LlmAgent(
     # model="gemini-2.0-flash",
     model=llm_model,
     description="Agente que evalúa aspectos psicológicos.",
-    instruction=GLOBAL_INSTRUCTIONS + "\n\n" + PSYCHOLOGY_EXPERT,
+    instruction=PSYCHOLOGY_EXPERT + "\n\n" + GLOBAL_INSTRUCTIONS,
     tools=[],
     output_key="psychology_response",
 )
@@ -94,7 +87,7 @@ security = LlmAgent(
     # model="gemini-2.0-flash",
     model=llm_model,
     description="Agente que evalúa aspectos de seguridad.",
-    instruction=GLOBAL_INSTRUCTIONS + "\n\n" + SECURITY_EXPERT,
+    instruction=SECURITY_EXPERT + "\n\n" + GLOBAL_INSTRUCTIONS,
     tools=[],
     output_key="security_response",
 )
@@ -104,7 +97,7 @@ legal = LlmAgent(
     # model="gemini-2.0-flash",
     model=llm_model,
     description="Agente que evalúa aspectos legales.",
-    instruction=GLOBAL_INSTRUCTIONS + "\n\n" + LEGAL_EXPERT,
+    instruction=LEGAL_EXPERT + "\n\n" + GLOBAL_INSTRUCTIONS,
     tools=[],
     output_key="legal_response",
 )
@@ -114,7 +107,7 @@ ai = LlmAgent(
     # model="gemini-2.0-flash",
     model=llm_model,
     description="Agente que evalúa aspectos técnicos de IA.",
-    instruction=GLOBAL_INSTRUCTIONS + "\n\n" + AI_EXPERT,
+    instruction=AI_EXPERT + "\n\n" + GLOBAL_INSTRUCTIONS,
     tools=[],
     output_key="ai_response",
 )
@@ -124,20 +117,8 @@ coordinador = LlmAgent(
     # model="gemini-2.0-flash",
     model=llm_model,
     description="Agente que recopila opiniones de varios expertos.",
-    instruction=(
-        "Eres el Agente Coordinador.\n"
-        "Debes recopilar las opiniones de los siguientes expertos:\n"
-        "1. Agente Ético, opinion en session.state['ethics_response']\n"
-        "2. Agente de Psicología, opinion en session.state['psychology_response']\n"
-        "3. Agente de Seguridad, opinion en session.state['security_response']\n"
-        "4. Agente Legal, opinion en session.state['legal_response']\n"
-        "5. Agente de IA, opinion en session.state['ai_response']\n\n"
-        "Recupera y une los pros y los contras de todos los expertos.\n"
-        "Analiza el contenido que has juntado con la herramienta y genera un resumen, manteniendo los puntos clave y añade un resumen final del consenso.\n"
-        "Guarda el resultado en session.state['expert_opinions']."
-    ),
+    instruction=COORDINATOR_AGENT,
     output_key="expert_opinions",
-    tools=[],
 )
 
 redactor = LlmAgent(
@@ -145,16 +126,8 @@ redactor = LlmAgent(
     # model="gemini-2.0-flash",
     model=llm_model,
     description="Agente que redacta el informe final.",
-    instruction=(
-        "Eres el Agente Redactor.\n"
-        "En session.state['expert_opinions'] tienes el resumen de las opiniones de los expertos.\n"
-        "Usa esa información para redactar un informe final claro sobre si se debe implementar el sistema propuesto, incluyendo los puntos clave y el consenso final. "
-        "Quiero que recojas los principales argumentos, tanto a favor como en contra, los puntos fuertes y ventajas que supondría utilizar un sistema asi, los riesgos que conlleva y cualquier condición o salvaguarda necesaria.\n"
-        "El informe final debe tener entre 600 y 900 palabras y guardao en session.state['final_report'].\n"
-        "Tras redactarlo, llama explícitamente a la herramienta generate_summat_file(content: str) pasando session.state['final_report'] para escribir final_report.txt."
-    ),
+    instruction=REDACTOR_AGENT,
     output_key="final_report",
-    tools=[generate_summat_file],
 )
 
 generador_documentos = LlmAgent(
@@ -181,7 +154,7 @@ consenso = LoopAgent(
     name="agente_multiexperto_consenso",
     sub_agents=[parallel_expertes, coordinador],
     description="Agente multi-experto que itera hasta alcanzar consenso o máximo número de iteraciones.",
-    max_iterations=1,
+    max_iterations=3,
 )
 
 root_agent = SequentialAgent(

@@ -1,25 +1,13 @@
 CONSENSE_THEME = "¿Debería utilizarse un sistema de IA para analizar conversaciones de WhatsApp, publicaciones en redes sociales y otros datos online (historial de compras, navegador, etc.) con el fin de detectar patologías psicológicas de una persona?"
 
 GLOBAL_INSTRUCTIONS = """
-Eres un experto en un sistema multiagente académico que debate sobre el uso de
-IA para analizar conversaciones de WhatsApp, redes sociales, historial de
-navegación y compras online con el fin de detectar posibles problemas de salud
-mental.
-
-Tus respuestas son únicamente para fines educativos y NO constituyen asesoramiento
-médico, legal ni psicológico real. No hagas diagnósticos, no des instrucciones
-clínicas ni de tratamiento. Usa un tono formal y técnico, pero claro y conciso.
-
 Quiero que evalues el siguiente tema de consenso que ha introducido el usuario.
 
-Además, quiero que consulte el session.state[expert_opinions] para consultar las 
-opiniones anteriores de todos los agentes
+En caso de que haya contenido en session.state[expert_opinions] quiero que lo utilices para consensuar con los otros expertos, rebatir sus puntos y llegar a una conclusión final.
 
 Debes realizarlo siguiendo esta estructura estricta:
 
 POSICION_GENERAL:
-  <1–3 frases resumiendo si estás a favor, en contra o condicionalmente a favor.>
-
   ARGUMENTOS_A_FAVOR:
   - Punto positivo 1
   - Punto positivo 2
@@ -35,7 +23,7 @@ POSICION_GENERAL:
   - Riesgo grave 2
   - ...
 
-  CONDICIONES_O_SALVAGUARDAS_NECESARIAS:
+  CONDICIONES_NECESARIAS_PARA_LA_IMPLEMENTACION:
   - Condición 1
   - Condición 2
   - ...
@@ -43,14 +31,10 @@ POSICION_GENERAL:
   CONCLUSION_DEL_EXPERTO:
   CLASIFICACION_FINAL: A_FAVOR | EN_CONTRA | NEUTRAL | CONDICIONAL
   <Resumen final breve, incluyendo si “aceptas” o “rechazas” el sistema y bajo qué condiciones.>
-
-
 """.strip()
 
 STRUCTURED_RESPONSE_INSTRUCTION = """
 POSICION_GENERAL:
-  <1–3 frases resumiendo si estás a favor, en contra o condicionalmente a favor.>
-
   ARGUMENTOS_A_FAVOR:
   - Punto positivo 1
   - Punto positivo 2
@@ -66,7 +50,7 @@ POSICION_GENERAL:
   - Riesgo grave 2
   - ...
 
-  CONDICIONES_O_SALVAGUARDAS_NECESARIAS:
+   CONDICIONES_NECESARIAS_PARA_LA_IMPLEMENTACION:
   - Condición 1
   - Condición 2
   - ...

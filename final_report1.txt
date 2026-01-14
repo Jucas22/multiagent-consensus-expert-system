@@ -1,0 +1,54 @@
+# Informe Final: Implementación de IA para Detección de Patologías Psicológicas
+
+## 1. Tema del debate
+Se evaluó la viabilidad de un sistema de inteligencia artificial que analice conversaciones de WhatsApp, publicaciones en redes sociales, historial de compras, datos de navegación y otros rastros digitales con el objetivo de detectar posibles patologías psicológicas.
+
+## 2. Proceso multi‑experto
+Participaron cinco especialistas (Ético, Psicología, Seguridad, Legal e IA). Todos coincidieron en los **beneficios potenciales** (detección precoz, escalabilidad, apoyo al profesional) y en los **requisitos indispensables** (consentimiento informado, supervisión humana, protección de datos, transparencia, mecanismos de recurso).
+
+### 2.1 Consenso sólido
+| Aspecto | Conclusión común |
+|---------|-------------------|
+| Detección temprana | La IA puede identificar riesgos antes de que el individuo busque ayuda. |
+| Supervisión humana | Human‑in‑the‑loop obligatorio para validar cualquier alerta. |
+| Consentimiento | Consentimiento libre, explícito, revocable y registrado es condición sine qua non. |
+| Privacidad y seguridad | Cifrado, anonimización/pseudonimización, auditorías y arquitectura security‑by‑design. |
+| Riesgos de falsos positivos/negativos | Reconocidos como inevitables; se requerirá monitoreo de métricas de desempeño. |
+| Sesgo y discriminación | Necesaria auditoría y mitigación continua. |
+| Uso limitado y propósito claro | Minimizados a la finalidad declarada (detección de patologías específicas). |
+| Transparencia y explicabilidad | Usuarios y profesionales deben entender el razonamiento del modelo. |
+| Mecanismo de recurso | Posibilidad de impugnar y solicitar corrección o eliminación de datos. |
+| Cumplimiento normativo | Adecuación a GDPR/CCPA/HIPAA y, cuando corresponda, normativa de dispositivos médicos. |
+
+### 2.2 Puntos controvertidos
+| Tema | Divergencia entre expertos |
+|------|----------------------------|
+| **Clasificación como dispositivo médico** | Legal exige certificación MDR/IVDR si el sistema emite diagnóstico; los demás lo consideran importante pero no obligatorio para una herramienta de apoyo. |
+| **Tratamiento sin consentimiento** | Legal menciona excepción de “intereses vitales” bajo estrictas salvaguardas; los demás la rechazan totalmente. |
+| **Grado de minimización de datos** | Seguridad e IA aceptan un conjunto multimodal amplio; Ético y Psicología abogan por una restricción más severa. |
+| **Responsabilidad** | Ético enfatiza la dificultad de asignar accountability; Legal asigna responsabilidad al controlador y al fabricante; Seguridad/IA se centran en responsabilidades técnicas y de auditoría. |
+| **Amenazas adversariales** | Solo Seguridad destaca la necesidad de pruebas de robustez frente a ataques adversarios. |
+
+## 3. Decisión consensuada final
+El grupo converge en una **posición condicional a favor** de la implantación del sistema, siempre que se cumplan **todas** las salvaguardas descritas. La condición de **certificación como dispositivo médico** se mantiene como un requisito abierto que deberá resolverse mediante evaluación regulatoria específica; mientras no se obtenga, el sistema operará exclusivamente como **herramienta de apoyo clínico** (no diagnóstico definitivo).
+
+## 4. Marco de responsabilidad
+* **Controlador del tratamiento** (organismo que recoge y procesa los datos) será responsable legal ante la normativa de protección de datos.
+* **Desarrollador del modelo** responderá por calidad técnica, mitigación de sesgos y resistencia a ataques adversariales.
+* **Profesional de salud** que valide la alerta asumirá la responsabilidad clínica del diagnóstico final.
+
+## 5. Recomendaciones para la implementación
+1. **Piloto controlado** con un servicio de salud pública o institución sanitaria.
+2. **Evaluación de Impacto de Protección de Datos (DPIA)** exhaustiva que abarque riesgos de privacidad, sesgo y ataques adversariales.
+3. **Certificación provisional** como herramienta de soporte clínico bajo el marco de dispositivos médicos de bajo riesgo, con ruta clara a certificación CE completa.
+4. **Procedimientos de consentimiento** claros, en lenguaje comprensible, con opción de revocación instantánea y registro de auditoría.
+5. **Arquitectura security‑by‑design**: cifrado de extremo a extremo, anonimización/pseudonimización, control de accesos basado en roles y pruebas de penetración periódicas.
+6. **Human‑in‑the‑loop** obligatorio: cualquier alerta debe ser revisada por un psicólogo o psiquiatra antes de comunicarse al usuario o iniciar una intervención.
+7. **Transparencia y explicabilidad**: generación de informes breves que describan los indicadores activadores y permitir al usuario solicitar revisión o eliminación de su perfil.
+8. **Mecanismo de recurso** gestionado por un ente independiente que garantice la rectificación, supresión de datos y la revisión de decisiones.
+
+## 6. Conclusión
+Con un diseño que integre **consentimiento explícito**, **supervisión humana**, **protección robusta de datos**, **transparencia** y **responsabilidad clara**, el proyecto puede aprovechar el potencial de la IA para la detección precoz de trastornos psicológicos sin comprometer derechos fundamentales. La implementación debe iniciar mediante un piloto regulado que sirva de base para una posterior certificación como dispositivo médico y una expansión controlada.
+
+---
+*Este informe constituye la base para la generación del documento final `final_report.txt`.*
