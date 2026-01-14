@@ -11,7 +11,6 @@ env = os.environ
 
 from google.adk.agents import LlmAgent, SequentialAgent, ParallelAgent, LoopAgent
 from google.adk.models.lite_llm import LiteLlm
-from google.adk.agents.remote_a2a_agent import RemoteA2aAgent
 
 from docs.constants import LLM_MODEL, GLOBAL_INSTRUCTIONS
 from docs.experts_descriptions import *
@@ -42,11 +41,6 @@ litellm._turn_on_debug()
 # ============================================================
 #  TOOLS:
 # ============================================================
-
-
-def fetch_opinions(texto: str) -> Dict:
-    """Devuelve un diccionario con el texto consolidado de opiniones."""
-    return {"opiniones_unidas": texto}
 
 
 def generate_summat_file(content: str | None = None, session=None) -> str:
@@ -154,11 +148,11 @@ consenso = LoopAgent(
     name="agente_multiexperto_consenso",
     sub_agents=[parallel_expertes, coordinador],
     description="Agente multi-experto que itera hasta alcanzar consenso o máximo número de iteraciones.",
-    max_iterations=3,
+    max_iterations=1,
 )
 
 root_agent = SequentialAgent(
     name="news_bulletin_pipeline",
     sub_agents=[consenso, redactor, generador_documentos],
-    description="Pipeline multiagente para generar un boletín de noticias diario.",
+    description="Agente secuencial que coordina la evaluación y generación del informe final.",
 )
