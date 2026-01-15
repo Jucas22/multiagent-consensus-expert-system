@@ -1,0 +1,47 @@
+# Final Report
+
+## 1. Topic under debate
+Should an artificial‑intelligence system be deployed to analyse private WhatsApp conversations, social‑media posts and other online data (e.g., purchase history, browsing activity) in order to detect possible psychological pathologies in individuals?
+
+## 2. Summary of the multi‑expert debate (≈ 350 words)
+All five experts agree that the core technical promise of the proposal is a *early‑warning* capability: natural‑language‑processing and behavioural‑pattern models can spot linguistic or behavioural signals that precede depression, anxiety, suicidal ideation or other mental‑health disorders. Because the system can operate automatically, it would be *scalable* to millions of users, offering a discreet “invisible” channel for people who never seek traditional help and providing a rich data source for research on digital behaviour and mental health. In clinical terms it could act as a *screening filter*, directing scarce mental‑health professionals toward the most at‑risk cases and potentially reducing downstream treatment costs.
+
+The experts converge on a long list of *serious drawbacks* that, in their view, cancel the benefits unless stringent safeguards are put in place. The most recurrent risks are:
+
+- **Privacy and confidentiality breaches** – analysing private chats and browsing data without permission directly violates GDPR/LOPD and fundamental privacy rights.
+- **Lack of informed, free, explicit and revocable consent** – the system cannot be legitimate if users are not opt‑in.
+- **Accuracy problems** – false‑positive or false‑negative classifications may stigmatise healthy individuals or leave vulnerable people undetected.
+- **Algorithmic bias** – models trained on existing data can reproduce gender, racial, socioeconomic or cultural discrimination.
+- **Autonomy and stigma** – labeling a person as “ill” without their knowledge harms dignity and may lead to discrimination in employment, insurance or social contexts.
+- **Misuse of data** – the same profiles could be repurposed for surveillance, targeted advertising or exclusionary policies.
+- **Security threats** – a centralised repository of highly sensitive mental‑health indicators is an attractive target for cyber‑attacks.
+- **Healthcare overload** – an uncontrolled flood of alerts could overwhelm clinicians (alert‑fatigue).
+- **Lack of clinical context** – digital traces do not capture trauma, medical history or life circumstances, limiting diagnostic validity.
+- **Regulatory non‑compliance** – without a DPIA, device‑medical certification (MDR/CE) and other legal steps the project breaches several statutes.
+
+All experts state that **any alert must be validated by a qualified mental‑health professional** before any action is taken. They also unanimously demand **transparent, auditable algorithms, strong encryption, data minimisation, independent oversight and a clear opt‑out mechanism**.
+
+Remaining points of contention relate mainly to emphasis: proving cost‑saving, the exact need for MDR registration, severity of health‑system overload, and whether governance should be internal audit or an independent ethics‑technical committee. None of these disagreements overturn the central consensus that the system is only acceptable under a strict, multidisciplinary safeguard framework.
+
+## 3. Final consensus decision (≈ 300 words)
+The expert panel reaches a *conditional* consensus: the proposed AI‑driven mental‑health screening system **may be implemented** **only if** a comprehensive set of safeguards is guaranteed before any real‑world deployment. In the absence of those safeguards the project must be **rejected** because the risks to privacy, autonomy, equity and legal compliance outweigh the potential public‑health benefits.
+
+**Conditions that must be satisfied prior to implementation**
+
+1. **Explicit, informed, revocable consent** collected from each user, with clear disclosure of data types, purposes, retention periods and an easy opt‑out / data‑deletion process.
+2. **Regulatory compliance** – a full Data‑Protection Impact Assessment (DPIA) under GDPR/LOPD, registration as a medical device (MDR/CE) where diagnostic claims are made, and adherence to any sector‑specific health‑law (e.g., HIPAA where applicable).
+3. **Clinical validation and human oversight** – the algorithm must be validated in peer‑reviewed studies; every generated alert must be reviewed and confirmed by a qualified psychologist or psychiatrist before any intervention.
+4. **Robust security and privacy engineering** – end‑to‑end encryption, data minimisation, pseudonymisation, regular penetration testing, incident‑response plans and strict access controls.
+5. **Algorithmic transparency and independent auditing** – public documentation of model architecture, training data provenance, performance metrics (including false‑positive/negative rates) and periodic audits by external, accredited bodies to detect bias and drift.
+6. **Multidisciplinary governance** – a standing ethics‑legal‑technical‑clinical committee with the authority to suspend or modify the system if safeguards fail.
+7. **Controlled pilot phase** – a limited‑scale rollout with predefined quantitative targets (e.g., ≤ 5 % false‑positive rate, manageable alert volume) and continuous monitoring of clinical impact and system load before any wider adoption.
+8. **Strict data‑use policy** – prohibition of secondary uses such as marketing, law‑enforcement profiling or employment screening; contractual penalties for violations.
+
+If any of these conditions cannot be demonstrably met, the panel recommends a complete halt to the project.
+
+## 4. Final recommendation for implementation (≈ 200 words)
+Given the unanimous recognition of the public‑health potential together with the equally unanimous warning about grave ethical, legal and security risks, **the system should proceed only as a tightly regulated pilot**. The pilot must be launched by a health‑authority or accredited research institution that can enforce the consent, security, and governance requirements listed above. During the pilot, independent auditors should verify that false‑positive and false‑negative rates remain within clinically acceptable limits, that bias metrics are neutral across protected groups, and that the alert workflow does not overload mental‑health providers.
+
+If the pilot demonstrates compliance, acceptable diagnostic performance, and no measurable privacy breaches or misuse, the findings can inform a controlled, step‑wise scaling plan, always preserving the opt‑out right and the mandatory human‑review gate. Absent such evidence, the project must remain shelved to protect individual rights and maintain legal compliance.
+
+**In short:** the AI‑driven detection system is *conditionally acceptable*; it may be implemented only after satisfying a full suite of consent, regulatory, clinical, security, transparency and governance safeguards, and after a successful, monitored pilot that proves its safety and efficacy.

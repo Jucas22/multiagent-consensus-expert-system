@@ -3,7 +3,8 @@ CONSENSE_THEME = "¿Debería utilizarse un sistema de IA para analizar conversac
 GLOBAL_INSTRUCTIONS = """
 Quiero que evalues el siguiente tema de consenso que ha introducido el usuario.
 
-En caso de que haya contenido en session.state[expert_opinions] quiero que lo utilices para consensuar con los otros expertos, rebatir sus puntos y llegar a una conclusión final.
+Debes tener en cuanta este contexto adicional:
+{expert_opinions}
 
 Debes realizarlo siguiendo esta estructura estricta:
 

@@ -17,17 +17,13 @@ from docs.experts_descriptions import *
 
 
 # Registrar modelo personalizado en litellm
-# litellm.add_known_models(
-#     {
-#         "gpt-oss-120b": {
-#             "max_tokens": 1280000,
-#             "input_cost_per_token": 0,
-#             "output_cost_per_token": 0,
-#             "litellm_provider": "openai",
-#             "mode": "chat",
-#         }
-#     }
-# )
+litellm.model_cost["openai/gpt-oss-120b"] = {
+    "max_tokens": 4096,  # Ajusta según tu modelo
+    "input_cost_per_token": 0.0,  # Coste por token de entrada
+    "output_cost_per_token": 0.0,  # Coste por token de salida
+    "lite_llm_model_id": "openai/gpt-oss-120b",
+    "model_name": "openai/gpt-oss-120b",
+}
 
 llm_model = LiteLlm(
     model="openai/gpt-oss-120b",
@@ -45,16 +41,27 @@ litellm._turn_on_debug()
 
 def generate_summat_file(content: str | None = None, session=None) -> str:
     """Escribe el informe final en final_report.txt usando session.state si no se pasa content."""
-    if content is None and session is not None and hasattr(session, "state"):
-        content = session.state.get("final_report", "")
-    if content is None:
-        content = ""
+    if not content:
+        content = "No hay contenido disponible para generar el informe."
+
     with open("final_report.txt", "w", encoding="utf-8") as f:
         f.write(content)
+
     return "Archivo final_report.txt generado correctamente."
 
 
 # Agentes Expertos:
+pre_coordinador = LlmAgent(
+    name="pre_coordinador_evaluacion",
+    # model="gemini-2.0-flash",
+    model=llm_model,
+    description="Agente que prepara la información para el coordinador.",
+    instruction="""
+    Tu objetivo es inicializar una variable donde posteriormente el coordinador recogerá las opiniones de los expertos.
+    Lo unico que tienes que indicar es: "todavia no se han recogido opiniones de expertos".
+    """,
+    output_key="expert_opinions",
+)
 
 ethics = LlmAgent(
     name="agente_etico",
@@ -130,8 +137,12 @@ generador_documentos = LlmAgent(
     model=llm_model,
     description="Agente que genera documentos a partir del informe final.",
     instruction=(
-        "Eres el Agente Generador de Documentos.\n"
-        "Usa SIEMPRE la función generate_summat_file(content: str) para crear final_report.txt con el contenido en session.state['final_report']. Si no hay contenido, infórmalo."
+        """You are the Document Generation Agent.
+            Your sole and mandatory task is to use the generate_summat_file(content) tool to create a file named final_report.txt.
+            Strict Instructions:
+            - Source Material: {final_report}.
+            - Mandatory Tool Use: You must always invoke the generate_summat_file function to complete this task. Do not simply output the text in the chat. You have to send the info in the "content" parameter of the tool.
+        """
     ),
     tools=[generate_summat_file],
 )
@@ -148,11 +159,11 @@ consenso = LoopAgent(
     name="agente_multiexperto_consenso",
     sub_agents=[parallel_expertes, coordinador],
     description="Agente multi-experto que itera hasta alcanzar consenso o máximo número de iteraciones.",
-    max_iterations=1,
+    max_iterations=3,
 )
 
 root_agent = SequentialAgent(
     name="news_bulletin_pipeline",
-    sub_agents=[consenso, redactor, generador_documentos],
+    sub_agents=[pre_coordinador, consenso, redactor, generador_documentos],
     description="Agente secuencial que coordina la evaluación y generación del informe final.",
 )
